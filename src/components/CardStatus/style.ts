@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Card = styled.div`
+export const CardStatus = styled.div`
   background: #fff;
   padding: 1.5rem 2rem;
   border-radius: 0.25rem;
@@ -21,12 +21,13 @@ export const Card = styled.div`
     margin-top: 1rem;
   }
 
-  .positivo {
-    background: var(--dark-green);
+  &&.positivo {
+    background: #49aa26;
     color: #fff;
   }
-  .negativo {
-    background: var(--dark-red);
+
+  &&.negativo {
+    background: #e92929;
     color: #fff;
   }
 `;

@@ -1,21 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 
-import Expense from "../../assets/images/expense.svg";
-import Income from "../../assets/images/income.svg";
-import Minus from "../../assets/images/minus.svg";
-import Plus from "../../assets/images/plus.svg";
-import Total from "../../assets/images/total.svg";
+import { IconProps } from "react-feather";
 
-import { Card } from "./style";
+import { CardStatus } from "./style";
 
-const Status: React.FC = ({ children }) => (
-  <Card>
-    <h3>
-      <span>Saídas</span>
-      <img src={Income} alt="Icone de entradas" />
-    </h3>
-    <p id="incomeDisplay">R$ 0,00</p>
-  </Card>
-);
+interface ICardStatus {
+  title: string;
+  valor: string;
+  icon: React.ComponentType<IconProps>;
+  id: "expenseDisplay" | "totalDisplay" | "incomeDisplay";
+  status?: "negativo" | "positivo";
+}
 
-export default Status;
+const Cardstatus: React.FC<ICardStatus> = ({
+  title,
+  icon: Icon,
+  valor,
+  id,
+  status,
+}) => {
+
+  return (
+    <CardStatus className={status}>
+      <h3>
+        <span>{title}</span>
+        {Icon && (
+          <Icon
+            size={30}
+            color={
+              id == "expenseDisplay"
+                ? "#E83F5B"
+                : "" || id == "incomeDisplay"
+                ? "#12A454"
+                : "" || id == "totalDisplay"
+                ? "#ffffff"
+                : ""
+            }
+          />
+        )}
+      </h3>
+      <p id={id}>{valor}</p>
+    </CardStatus>
+  );
+};
+
+export default Cardstatus;
