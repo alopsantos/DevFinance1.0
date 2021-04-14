@@ -1,17 +1,37 @@
-import React from "react";
-import { DollarSign, ArrowUpCircle, ArrowDownCircle } from "react-feather";
+import React, { useEffect, useState } from "react";
+import {
+  DollarSign,
+  ArrowUpCircle,
+  ArrowDownCircle,
+  MinusCircle,
+  Edit,
+} from "react-feather";
 
+import api from "./services/api";
 import "./assets/styles/global.css";
 import CardStatus from "./components/CardStatus";
+import Modal from "./components/Modal";
 
 import Logo from "./assets/images/logo.svg";
-import Expense from "./assets/images/expense.svg";
-import Income from "./assets/images/income.svg";
-import Minus from "./assets/images/minus.svg";
-import Plus from "./assets/images/plus.svg";
-import Total from "./assets/images/total.svg";
+
+interface ITransaction {
+  id: number;
+  description: string;
+  value: number;
+  date: string;
+}
 
 function App() {
+
+  const [transactions, setTransactions] = useState<ITransaction[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useEffect(() => {
+    api.get("transactions").then((response) => {
+      setTransactions(response.data);
+    });
+  }, []);
+
   return (
     <>
       <header>
@@ -45,7 +65,11 @@ function App() {
         <section id="transaction">
           <h2 className="sr-only">Transações</h2>
 
-          <a href="#" className="button new">
+          <a
+            href="#"
+            onClick={() => setIsModalVisible(true)}
+            className="button new"
+          >
             + Nova Transação
           </a>
 
@@ -56,65 +80,36 @@ function App() {
                 <th className="expense">Valor</th>
                 <th>Data</th>
                 <th></th>
+                <th></th>
               </tr>
             </thead>
 
             <tbody>
-              <tr>
-                <td>Luz</td>
-                <td>-R$ 20,00</td>
-                <td>25/11/1988</td>
-                <td></td>
-              </tr>
+              {transactions.map((transaction) => {
+                return (
+                  <tr>
+                    <td key={transaction.id}>{transaction.description}</td>
+                    <td>{transaction.value}</td>
+                    <td>{transaction.date}</td>
+                    <td>
+                      <Edit size={20} color="blue" />
+                    </td>
+                    <td>
+                      <MinusCircle size={20} color="red" />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </section>
       </main>
-      <div className="modal-overlay">
-        <div className="modal">
-          <div className="form">
-            <h2>Nova Transação</h2>
-
-            <form action="">
-              <div className="input-group">
-                <label className="sr-only">Descrição</label>
-                <input
-                  type="text"
-                  id="description"
-                  name="description"
-                  placeholder="Descrição"
-                />
-              </div>
-              <div className="input-group">
-                <label className="sr-only">Valor</label>
-                <input
-                  type="number"
-                  id="amount"
-                  name="amount"
-                  step="0.01"
-                  placeholder="0,00"
-                />
-
-                <small className="help">
-                  Use o sinal - (negativo) para despesas e , (vírgula) para
-                  casas decimais
-                </small>
-              </div>
-              <div className="input-group">
-                <label className="sr-only">Data</label>
-                <input type="date" id="date" name="date" />
-              </div>
-
-              <div className="input-group actions">
-                <a href="#" className="button cancel">
-                  Cancelar
-                </a>
-                <button>Salvar</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+      {isModalVisible ? (
+        <Modal onClose={() => setIsModalVisible(false)} />
+      ) : null}
+      <footer>
+        <h2>Dev.finance$</h2>
+      </footer>
     </>
   );
 }
